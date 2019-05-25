@@ -1,5 +1,5 @@
 export function isvalidUsername(str) {
-  const valid_map = ['admin', 'test']
+  const valid_map = ['admin2', 'test']
   return valid_map.indexOf(str.trim()) >= 0
 }
 

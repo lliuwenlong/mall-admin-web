@@ -5,7 +5,7 @@ import { getToken } from '@/utils/auth'
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: process.env.BASE_API, // api的base_url
+  baseURL: '/api', // api的base_url
   timeout: 15000 // 请求超时时间
 })
 
@@ -28,15 +28,15 @@ service.interceptors.response.use(
   * code为非200是抛错 可结合自己业务进行修改
   */
     const res = response.data
-    if (res.code !== 200) {
+    if (res.errno !== 0) {
       Message({
-        message: res.message,
+        message: res.errmsg,
         type: 'error',
         duration: 3 * 1000
       })
 
       // 401:未登录;
-      if (res.code === 401||res.code === 403) {
+      if (res.errno === 401||res.errno === 403) {
         MessageBox.confirm('你已被登出，可以取消继续留在该页面，或者重新登录', '确定登出', {
           confirmButtonText: '重新登录',
           cancelButtonText: '取消',
