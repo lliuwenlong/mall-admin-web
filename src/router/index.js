@@ -37,7 +37,7 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/pms/product',
     name: 'pms',
-    meta: {title: '商品', icon: 'product'},
+    meta: {title: '知识超市', icon: 'product'},
     children: [{
       path: 'product',
       name: 'product',
@@ -145,7 +145,7 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/oms/order',
     name: 'oms',
-    meta: {title: '订单', icon: 'order'},
+    meta: {title: '基础设置', icon: 'order'},
     children: [
       {
         path: 'order',
@@ -199,7 +199,7 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/sms/coupon',
     name: 'sms',
-    meta: {title: '营销', icon: 'sms'},
+    meta: {title: '课程管理', icon: 'sms'},
     children: [
       {
         path: 'flash',
