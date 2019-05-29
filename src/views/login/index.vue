@@ -9,7 +9,7 @@
         <div style="text-align: center">
           <svg-icon icon-class="login-mall" style="width: 56px;height: 56px;color: #409EFF"></svg-icon>
         </div>
-        <h2 class="login-title color-main">mall-admin-web</h2>
+        <h2 class="login-title color-main">拓亿后台管理系统</h2>
         <el-form-item prop="username">
           <el-input name="username"
                     type="text"
@@ -44,7 +44,7 @@
       </el-form>
     </el-card>
     <img :src="login_center_bg" class="login-center-layout">
-    <el-dialog
+    <!-- <el-dialog
       title="特别赞助"
       :visible.sync="dialogVisible"
       width="30%">
@@ -53,7 +53,7 @@
     <el-button @click="dialogCancel">残忍拒绝</el-button>
     <el-button type="primary" @click="dialogConfirm">去支持</el-button>
   </span>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -81,12 +81,12 @@
       };
       return {
         loginForm: {
-          username: 'admin2',
-          password: 'admin123',
+          username: 'boss',
+          password: '000',
         },
         loginRules: {
-          username: [{required: true, trigger: 'blur', validator: validateUsername}],
-          password: [{required: true, trigger: 'blur', validator: validatePass}]
+          username: [{required: true, trigger: 'blur'}],
+          password: [{required: true, trigger: 'blur'}]
         },
         loading: false,
         pwdType: 'password',
@@ -106,10 +106,6 @@
         this.$refs.loginForm.validate(valid => {
           if (valid) {
             let isSupport = getSupport();
-            if(isSupport===undefined||isSupport==null){
-              this.dialogVisible =true;
-              return;
-            }
             this.loading = true;
             this.$store.dispatch('Login', this.loginForm).then(() => {
               this.loading = false;

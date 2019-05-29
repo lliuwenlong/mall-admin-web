@@ -26,6 +26,9 @@
         img_404
       }
     },
+    created(){
+      console.log(this.$router)
+    },
     methods: {
       handleGoMain() {
         this.$router.push({path: '/'})
