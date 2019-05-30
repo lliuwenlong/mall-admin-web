@@ -52,3 +52,35 @@ export function formatTime(time, option) {
     return d.getMonth() + 1 + '月' + d.getDate() + '日' + d.getHours() + '时' + d.getMinutes() + '分'
   }
 }
+
+export const chunkFile = (file, total, hash, size) => {
+    return Array.from(Array.from(Array(total).keys())).map((item, index) => {
+        let start = index * size;
+        let end = Math.min(file.size, start + start);
+        const form = new FormData();
+        form.append('file', file.slice(start, end));
+        form.append('index', index);
+        form.append('hash', hash);
+        return request({
+            method: 'post',
+            url: '/common/chunkFile',
+            data: form,
+            headers:{
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+    });
+};
+
+export const gcd = (x, y) => {  
+    let max,min,temp;  
+    max = x > y ? x : y ;  
+    min = x < y ? x : y ;  
+    while( max % min ){  
+
+        temp = max % min;  
+        max = min;  
+        min = temp;  
+    }  
+    return min;  
+};
