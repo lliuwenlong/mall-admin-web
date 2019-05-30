@@ -18,9 +18,16 @@ import Layout from '../views/layout/Layout'
     icon: 'svg-name'             the icon show in the sidebar,
   }
  **/
-export const constantRouterMap = [
-  { path: '/login', component: () => import('@/views/login/index'), hidden: true },
-  { path: '/404', component: () => import('@/views/404'), hidden: true },
+export const constantRouterMap = [{
+    path: '/login',
+    component: () => import('@/views/login/index'),
+    hidden: true
+  },
+  {
+    path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
+  },
   {
     path: '',
     component: Layout,
@@ -29,7 +36,10 @@ export const constantRouterMap = [
       path: 'home',
       name: 'home',
       component: () => import('@/views/home/index'),
-      meta: { title: '首页', icon: 'sy' }
+      meta: {
+        title: '首页',
+        icon: 'sy'
+      }
     }]
   },
   {
@@ -37,83 +47,119 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/system/CurriculumType',
     name: 'system',
-    meta: { title: '系统设置', icon: 'xt2' },
+    meta: {
+      title: '系统设置',
+      icon: 'xt2'
+    },
     children: [{
       path: 'CurriculumType',
       name: 'CurriculumType',
       component: () => import('@/views/system/curriculumType/index'),
-      meta: { title: '分类管理', icon: 'xt2' }
-    },{
+      meta: {
+        title: '分类管理',
+        icon: 'xt2'
+      }
+    }, {
       path: 'setBasic',
       name: 'setBasic',
       component: () => import('@/views/system/setBasic/index'),
-      meta: { title: '基础设置', icon: 'xt2' }
+      meta: {
+        title: '基础设置',
+        icon: 'xt2'
+      }
     }],
   },
-    {
-      path: '/giftCard',
-      component: Layout,
-      redirect: '/giftCard/giftCardList',
-      name: 'giftCard',
-      // component: () => import('@/views/system/giftCard/index'),
-      meta: { title: '礼品卡管理', icon: 'lipins' },
-      children:[{
-        path: 'giftCardList',
-        name: 'giftCardList',
-        component: () => import('@/views/giftCard/index'),
-        meta: { title: '礼品卡列表', icon: 'lipins' }
-      },{
-        path: 'giftCardAdd',
-        name: 'giftCardAdd',
-        component: () => import('@/views/giftCard/add'), 
-        meta: { title: '礼品卡添加', icon: 'lipins' }
-      }]
-    }
-///////////////////////////////////////////////////////
-    ,
-    {
-      path: '/underLine',
-      component: Layout,
-      redirect: '/underLine/giftCardList',
-      name: 'underLine',
-      // component: () => import('@/views/system/giftCard/index'),
-      meta: { title: '线下活动管理', icon: 'xianxia' },
-      children:[{
-        path: 'underLineAdd',
-        name: 'underLineAdd',
-        component: () => import('@/views/underLine/add'),
-        meta: { title: '线下活动添加', icon: 'xianxia' }
-      },{
-        path: 'giftCardshow',
-        name: 'giftCardshow',
-        component: () => import('@/views/underLine/show'), 
-        meta: { title: '线下管理展示', icon: 'xianxia' }
-      }]
-    }
-////////////////////////////////////////////////////
-,
-    {
-      path: '/user',
-      component: Layout,
-      redirect: '/user/getUserList',
-      name: 'user',
-      // component: () => import('@/views/system/giftCard/index'),
-      meta: { title: '用户列表管理', icon: 'userlist' },
-      children:[{
-        path: 'giftCardshow',
-        name: 'giftCardshow',
-        
-        component: () => import('@/views/user/show.vue'), 
-        meta: { title: '用户列表展示', icon: 'userlist' }
-      }]
-    }
-,
-  { path: '*', redirect: '/404', hidden: true }
+  {
+    path: '/giftCard',
+    component: Layout,
+    redirect: '/giftCard/giftCardList',
+    name: 'giftCard',
+    // component: () => import('@/views/system/giftCard/index'),
+    meta: {
+      title: '礼品卡管理',
+      icon: 'lipins'
+    },
+    children: [{
+      path: 'giftCardList',
+      name: 'giftCardList',
+      component: () => import('@/views/giftCard/index'),
+      meta: {
+        title: '礼品卡列表',
+        icon: 'lipins'
+      }
+    }, {
+      path: 'giftCardAdd',
+      name: 'giftCardAdd',
+      component: () => import('@/views/giftCard/add'),
+      meta: {
+        title: '礼品卡添加',
+        icon: 'lipins'
+      }
+    }]
+  }
+  ///////////////////////////////////////////////////////
+  ,
+  {
+    path: '/underLine',
+    component: Layout,
+    redirect: '/underLine/giftCardshow',
+    name: 'underLine',
+    // component: () => import('@/views/system/giftCard/index'),
+    meta: {
+      title: '线下活动管理',
+      icon: 'xianxia'
+    },
+    children: [{
+      path: 'underLineAdd',
+      name: 'underLineAdd',
+      component: () => import('@/views/underLine/add'),
+      meta: {
+        title: '线下活动添加',
+        icon: 'xianxia'
+      }
+    }, {
+      path: 'giftCardshow',
+      name: 'giftCardshow',
+      component: () => import('@/views/underLine/show'),
+      meta: {
+        title: '线下管理展示',
+        icon: 'xianxia'
+      }
+    }]
+  }
+  ////////////////////////////////////////////////////
+  ,
+  {
+    path: '/user',
+    component: Layout,
+    redirect: '/user/userList',
+    name: 'user',
+    // component: () => import('@/views/system/giftCard/index'),
+    meta: {
+      title: '用户列表管理',
+      icon: 'userlist'
+    },
+    children: [{
+      path: 'userList',
+      name: 'userList',
+      component: () => import('@/views/user/show.vue'),
+      meta: {
+        title: '用户列表展示',
+        icon: 'userlist'
+      }
+    }]
+  },
+  {
+    path: '*',
+    redirect: '/404',
+    hidden: true
+  }
 ]
 
 export default new Router({
   // mode: 'history', //后端支持可开
-  scrollBehavior: () => ({ y: 0 }),
+  scrollBehavior: () => ({
+    y: 0
+  }),
   routes: constantRouterMap
 })
-
