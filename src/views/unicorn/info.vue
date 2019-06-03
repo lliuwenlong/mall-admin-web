@@ -20,49 +20,18 @@
                 <el-input v-model="productAttr.place"></el-input>
             </el-form-item>
             <el-form-item label="基本信息" prop="basic">
-                <tinymce :width="595" :height="300" v-model="productAttr.basic"></tinymce>
+                <tinymce :width="595" :height="300" :rows="4" v-model="productAttr.basic"></tinymce>
             </el-form-item>
             <el-form-item label="详细信息" prop="basic">
                 <tinymce :width="595" :height="300" v-model="productAttr.details"></tinymce>
             </el-form-item>
-            <el-form-item label="选择标签" prop="unicorn_tags">
+            <el-form-item label="选择标签" prop="unicorn_tags"></el-form-item>
+            <el-form-item label="可抢占城市" prop="contactsTel">
+                <tree-transfer></tree-transfer>
             </el-form-item>
-            <el-form-item label="设置可抢占城市" prop="unicorn_tags">
-            </el-form-item>
-
-
-            
-            <el-form-item label="起始价格" width="120" align="center">
-                <el-input v-model="productAttr.startPrice"></el-input>
-            </el-form-item>
-            <el-form-item label="结束价格" width="120" align="center">
-                <el-input v-model="productAttr.endPrice"></el-input>
-            </el-form-item>
-            <el-form-item label="时间段" width="120">
-                <el-date-picker
-                    v-model="productAttr.timeSlot"
-                    type="datetimerange"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                ></el-date-picker>
-            </el-form-item>
-            <el-form-item label="联系人头像：" prop="contactsImg">
-                <el-upload
-                    class="avatar-uploader"
-                    action="/api/common/uploadFile"
-                    :show-file-list="false"
-                    :on-success="res=>{ productAttr.contactsImg=res.data.path }"
-                >
-                    <img v-if="productAttr.contactsImg" :src="imgPath()+productAttr.contactsImg" class="avatar">
-                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                </el-upload>
-            </el-form-item>
-            <el-form-item label="联系人姓名" prop="contactsName">
-                <el-input v-model="productAttr.contactsName"></el-input>
-            </el-form-item>
-            <el-form-item label="联系人电话" prop="contactsTel">
-                <el-input v-model="productAttr.contactsTel"></el-input>
+            <el-form-item label="项目信息" prop="unicorn_info"></el-form-item>
+            <el-form-item label="成员" prop="unicorn_member">
+                
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="onSubmit('productAttrFrom')">提交</el-button>
@@ -76,7 +45,7 @@
 import { addOrUpdate } from "@/api/underLine";
 import Tinymce from "@/components/Tinymce";
 import { imgPath } from "@/utils/imgPath";
-
+import treeTransfer from "@/components/TreeTransfer";
 const defaultProductAttr = {
     name: "",
     purchaseInstructions: "",
@@ -87,7 +56,7 @@ const defaultProductAttr = {
     timeSlot: []
 };
 export default {
-    components: { tinymce: Tinymce },
+    components: { tinymce: Tinymce, treeTransfer },
     name: "ProductAttrDetail",
     props: {
         isEdit: {
@@ -117,21 +86,12 @@ export default {
                 ]
             },
             productAttrCateList: null,
-            inputListFormat: null
         };
     },
     created() {
         this.resetProductAttr();
         if (this.$route.query.data && this.$route.query.data.name)
             this.productAttr = this.$route.query.data;
-        // }
-        // this.getCateList();
-    },
-    watch: {
-        inputListFormat: function(newValue, oldValue) {
-            newValue = newValue.replace(/\n/g, ",");
-            this.productAttr.inputList = newValue;
-        }
     },
     methods: {
         handleRemove(file, fileList) {
@@ -185,11 +145,11 @@ export default {
             this.resetProductAttr();
         },
         resetProductAttr() {
-            this.productAttr = Object.assign({}, defaultProductAttr);
-            this.productAttr.productAttributeCategoryId = Number(
-                this.$route.query.cid
-            );
-            this.productAttr.type = Number(this.$route.query.type);
+            // this.productAttr = Object.assign({}, defaultProductAttr);
+            // this.productAttr.productAttributeCategoryId = Number(
+            //     this.$route.query.cid
+            // );
+            // this.productAttr.type = Number(this.$route.query.type);
         }
     }
 };

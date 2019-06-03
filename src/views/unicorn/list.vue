@@ -20,7 +20,6 @@
                         </el-form-item>
                     </el-form>
                 </div>
-
                 <div style="margin:0 auto;"></div>
             </div>
         </el-card>
@@ -58,7 +57,7 @@
 <script>
 import { getList, del } from "@/api/unicorn";
 import Tinymce from "@/components/Tinymce";
-// import { imgPath } from "@/utils/imgPath";
+import { imgPath } from "@/utils/imgPath";
 export default {
     name: "productList",
     components: { tinymce: Tinymce },
