@@ -12,8 +12,11 @@
   "dependencies": {
     "axios": "^0.18.0",
     "echarts": "^4.2.0-rc.2",
+    "el-tree-transfer": "^2.2.0",
     "element-ui": "^2.3.7",
     "js-cookie": "^2.2.0",
+    "less": "^3.9.0",
+    "less-loader": "^5.0.0",
     "normalize.css": "^8.0.0",
     "nprogress": "^0.2.0",
     "socket.io-client": "^2.2.0",
