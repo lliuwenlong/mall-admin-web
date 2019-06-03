@@ -1,0 +1,1 @@
+export const PUBLIC_PATH = 'http://192.168.1.25:8900/';

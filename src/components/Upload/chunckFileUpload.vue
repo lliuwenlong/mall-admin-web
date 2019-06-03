@@ -3,9 +3,10 @@
         <el-upload
             action=""
             :http-request="chunFileUplaod"
-            :show-file-list="false"
+            :show-file-list="showFileList"
+            :accept="accept"
         >
-            <el-button size="small" type="primary">点击上传</el-button>
+            <slot></slot>
         </el-upload>
     </div>
 </template>
@@ -16,7 +17,9 @@ import request from '@/utils/request';
 export default {
     name: "singleUpload",
     props: {
-        value: String
+        accept: String,
+        path: String,
+        'showFileList': Boolean
     },
     computed: {
         imageUrl() {
@@ -36,16 +39,6 @@ export default {
                     url: this.imageUrl
                 }
             ];
-        },
-        showFileList: {
-            get: function() {
-                return (
-                    this.value !== null &&
-                    this.value !== "" &&
-                    this.value !== undefined
-                );
-            },
-            set: function(newValue) {}
         }
     },
     data() {
@@ -73,8 +66,8 @@ export default {
                     total,
                     hash,
                     name
-                }),then(res => {
-                    this.$emit('sucessFile', res);
+                }).then(res => {
+                    this.$emit('onSuccess', res);
                 }) ;
             })
         },
@@ -106,16 +99,6 @@ export default {
                         reject(false);
                     });
             });
-        },
-        handleUploadSuccess(res, file) {
-            this.showFileList = true;
-            this.fileList.pop();
-            this.fileList.push({
-                name: file.name,
-                url:
-                    this.dataObj.host + "/" + this.dataObj.dir + "/" + file.name
-            });
-            this.emitInput(this.fileList[0].url);
         }
     }
 };

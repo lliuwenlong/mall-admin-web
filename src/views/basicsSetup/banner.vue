@@ -22,7 +22,7 @@
                     @mouseenter="isShowHoveId = val.id"
                     @mouseleave="isShowHoveId = null"
                 >
-                    <img :src="`http://192.168.1.10:8900/${val.url}`">
+                    <img :src="`${publicImage}${val.url}`">
                     <div class="hover" v-show="isShowHoveId === val.id">
                         <i class="el-icon-delete" @click="removeImg(val)" v-if="imgList.length > 5"></i>
                         <el-button type="text" @click="replaceImg(val)">替换图片</el-button>
@@ -55,6 +55,7 @@
 <script>
 import request from "@/utils/request";
 import {gcd} from "@/utils/index";
+import {PUBLIC_PATH} from "@/config/config"
 export default {
     created() {
         this.getImgList();
@@ -65,7 +66,8 @@ export default {
             imgList: [],
             isShowHoveId: false,
             isShowDialog: false,
-            imgId: null
+            imgId: null,
+            publicImage: PUBLIC_PATH
         };
     },
     methods: {
