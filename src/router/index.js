@@ -79,6 +79,24 @@ export const constantRouterMap = [
             }
         },
         {
+            path: 'accountSet',
+            name: 'accountSet',
+            component: () => import('@/views/basicsSetup/accountSet'),
+            meta: {
+                title: '慧币设置',
+                icon: 'product-list'
+            }
+        },
+        {
+            path: 'labelAdmin',
+            name: 'labelAdmin',
+            component: () => import('@/views/basicsSetup/labelAdmin'),
+            meta: {
+                title: '标签管理',
+                icon: 'product-list'
+            }
+        },
+        {
             path: 'banner',
             name: 'banner',
             component: () => import('@/views/basicsSetup/banner'),
