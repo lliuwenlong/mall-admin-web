@@ -22,7 +22,7 @@
                 >
                     <img
                         v-if="productAttr.coverPhoto"
-                        :src="imgPath()+productAttr.coverPhoto"
+                        :src="imgPath+productAttr.coverPhoto"
                         class="avatar"
                     >
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -39,9 +39,8 @@
 <script>
 import { addGiftCard } from "@/api/gitCard";
 import Tinymce from "@/components/Tinymce";
-import { imgPath } from "@/utils/imgPath";
+import {PUBLIC_PATH} from '@/config/config'
 const defaultProductAttr = {
-    imgPath,
     name: "",
     purchaseInstructions: "",
     process: "",
@@ -60,6 +59,7 @@ export default {
     },
     data() {
         return {
+            imgPath: PUBLIC_PATH,
             productAttr: Object.assign({}, defaultProductAttr),
             dialogImageUrl: "",
             dialogVisible: false,
