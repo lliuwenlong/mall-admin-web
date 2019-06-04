@@ -12,11 +12,6 @@ export const TABLE_LIST_COLUMN = [
         prop: 'typeName'
     },
     {
-        label: '描述',
-        prop: 'content',
-        width: '300'
-    },
-    {
         label: '价钱',
         prop: 'price'
     },

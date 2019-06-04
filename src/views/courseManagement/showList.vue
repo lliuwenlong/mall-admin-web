@@ -23,6 +23,7 @@
                     <template slot-scope="scope">
                         <el-button type="text" size="small" @click="openCrriculum(scope.row)">查看课程</el-button>
                         <el-button type="text" size="small" @click="deleteList(scope.row)">删除</el-button>
+                        <el-button type="text" size="small" @click="edit(scope.row)">编辑</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -162,6 +163,14 @@ export default {
                     });
             });
         },
+        edit(row) {
+            this.$router.push({
+                path: 'addCourseManagement',
+                query: {
+                    id: row.id
+                }
+            });
+        }
     }
 };
 </script>
