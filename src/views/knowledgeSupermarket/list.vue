@@ -95,7 +95,7 @@ export default {
     },
     methods: {
         getList() {
-            request.post("/curriculum/getList").then(res => {
+            request.post("/market/getList").then(res => {
                 if (res.errno === 0) {
                     this.list = res.data;
                 }
@@ -107,7 +107,7 @@ export default {
                 cancelButtonText: "取消"
             }).then(() => {
                 request
-                    .post("/curriculum/delete", { id })
+                    .post("/market/del", { id })
                     .then(res => {
                         res.errno === 0 && this.getList();
                         this.$message({
@@ -129,7 +129,7 @@ export default {
         },
         openCrriculum({id}) {
             this.showcCrriculum = true;
-            request.post('/common/getCurriculumList', {id, type: 0}).then(res => {
+            request.post('/common/getCurriculumList', {id, type: 1}).then(res => {
                 if (res.errno === 0) {
                     this.crriculumList = res.data;
                 }
@@ -144,7 +144,7 @@ export default {
                 cancelButtonText: "取消"
             }).then(() => {
                 request
-                    .post("/common/delCurriculumList", { id, type: 0 })
+                    .post("/common/delCurriculumList", { id, type: 1 })
                     .then(res => {
                         if (res.errno === 0) {
                             const data = this.crriculumList.filter(item => id != item.id)
@@ -165,7 +165,7 @@ export default {
         },
         edit(row) {
             this.$router.push({
-                path: 'addCourseManagement',
+                path: 'addList',
                 query: {
                     id: row.id
                 }
