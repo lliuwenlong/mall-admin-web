@@ -44,25 +44,10 @@ export const constantRouterMap = [
         }]
     },
     {
-<<<<<<< HEAD
-        path: 'labelAdmin',
-        name: 'labelAdmin',
-        component: () => import('@/views/basicsSetup/labelAdmin'),
-        meta: {
-            title: '标签管理',
-            icon: 'product-list'
-        }
-    },
-    {
-        path: 'banner',
-        name: 'banner',
-        component: () => import('@/views/basicsSetup/banner'),
-=======
         path: '/system',
         component: Layout,
         redirect: '/system/CurriculumType',
         name: 'system',
->>>>>>> 08835ad79b70c5f9011ce36729204b2f3cc1b7e3
         meta: {
             title: '系统设置',
             icon: 'xt2'
