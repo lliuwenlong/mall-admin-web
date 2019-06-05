@@ -25,30 +25,34 @@
                 <el-input v-model="productAttr.subTitle"></el-input>
             </el-form-item>
             <el-form-item
-                label="分类"
-                prop="typeId"
-                :rules="[
-                    { required: true, message: '请选择分类', trigger: 'change' },
-                ]"
-            >
-                <el-select v-model="productAttr.typeId" @change="typeIdChange">
-                    <el-option
-                        v-for="(val, key) in typeList"
-                        :key="key"
-                        :value="val.id"
-                        :label="val.name"
-                    ></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item
-                v-if="type === 1"
                 label="价格"
                 prop="price"
                 :rules="[
                     { required: true, message: '请输入价格', trigger: 'blur' },
                 ]"
             >
-                <el-input v-model.number="productAttr.price"></el-input>
+                <el-input v-model="productAttr.price"></el-input>
+            </el-form-item>
+            <el-form-item
+                label="vip价格"
+                prop="vipPrice"
+                :rules="[
+                    { required: true, message: '请输入vip价格', trigger: 'blur' },
+                ]"
+            >
+                <el-input v-model="productAttr.vipPrice"></el-input>
+            </el-form-item>
+            <el-form-item
+                label="主讲人"
+                prop="speaker"
+                :rules="[
+                    { required: true, message: '请输入主讲人', trigger: 'blur' },
+                ]"
+            >
+                <el-input v-model.number="productAttr.speaker"></el-input>
+            </el-form-item>
+            <el-form-item label="简介" prop="briefIntroduction">
+                <tinymce :width="595" :height="300" v-model="productAttr.briefIntroduction"></tinymce>
             </el-form-item>
             <el-form-item label="详情介绍" prop="content">
                 <tinymce :width="595" :height="300" v-model="productAttr.content"></tinymce>
@@ -68,12 +72,12 @@
                     >{{productAttr.cover ? '替换封面' : '上传封面'}}</el-button>
                 </el-upload>
                 <el-link
-                    :type="productAttr.cover ? 'success' : 'danger'"
+                    :type="productAttr.img ? 'success' : 'danger'"
                     class="label"
                     :underline="false"
-                >{{productAttr.cover ? '已上传' : '未上传'}}</el-link>
-                <div class="cover" v-if="productAttr.cover">
-                    <img :src="getUrl(productAttr.cover)" alt>
+                >{{productAttr.img ? '已上传' : '未上传'}}</el-link>
+                <div class="cover" v-if="productAttr.img">
+                    <img :src="getUrl(productAttr.img)" alt>
                 </div>
             </el-form-item>
             <el-form-item label="上传课程">
@@ -158,32 +162,35 @@ export default {
                 subTitle: "",
                 content: "",
                 classHour: [],
-                typeId: "",
-                price: 0,
-                cover: ""
+                price: '',
+                img: "",
+                speaker: '',
+                vipPrice: '',
+                briefIntroduction: ''
             },
             typeList: [],
-            type: "",
             deleteId: []
         };
     },
     created() {
         this.getTypeList();
         if (this.$route.query.id) {
-            const task = request.post("/curriculum/getList", {id: this.$route.query.id});
-            const curriculumList = request.post("/common/getCurriculumList", {id: this.$route.query.id, type: 0});
+            const task = request.post("/market/getList", {id: this.$route.query.id});
+            const curriculumList = request.post("/common/getCurriculumList", {id: this.$route.query.id, type: 1});
             Promise.all([task, curriculumList]).then(res => {
                 let [list, curriculumList] = res;
                 if (list.errno === 0) {
-                    const {content, price, title: name, type_id: typeId, subtitle: subTitle, cover} = list.data[0];
+                    const {content, price, vipPrice, name, subtitle: subTitle, img, speaker, basic} = list.data[0];
                     this.productAttr = {
                         ...this.productAttr,
                         content,
                         price,
+                        vipPrice,
                         name,
-                        typeId,
                         subTitle,
-                        cover
+                        img,
+                        speaker,
+                        briefIntroduction: basic
                     };
                 }
                 if (curriculumList.errno === 0) {
@@ -195,7 +202,6 @@ export default {
                                 title: item.title,
                                 video: item.video,
                                 audio: item.audio,
-                                type: item.type,
                                 c_id: this.$route.query.id,
                                 id: item.id
                             }
@@ -219,7 +225,7 @@ export default {
                 title: "",
                 video: "",
                 audio: "",
-                type: 0
+                type: 1
             });
             productAttr.classHour = [...classHour];
             this.productAttr = { ...productAttr };
@@ -229,11 +235,15 @@ export default {
                 if (valid) {
                     let flag = true;
                     let content = [];
+                    if (this.productAttr.briefIntroduction === "") {
+                        content.push("简介");
+                        flag = false;
+                    }
                     if (this.productAttr.content === "") {
                         content.push("详情介绍");
                         flag = false;
                     }
-                    if (this.productAttr.cover === "") {
+                    if (this.productAttr.img === "") {
                         content.push("封面");
                         flag = false;
                     }
@@ -256,14 +266,16 @@ export default {
                         }
                     }
                     if (flag) {
-                        request.post('/curriculum/addOrUpdate', {
-                            title: this.productAttr.name,
+                        request.post('/market/addOrUpdate', {
+                            name: this.productAttr.name,
                             subtitle: this.productAttr.subTitle,
                             content: this.productAttr.content,
                             list: this.productAttr.classHour,
-                            type_id: this.productAttr.typeId,
                             price: this.productAttr.price,
-                            cover: this.productAttr.cover,
+                            vipPrice: this.productAttr.vipPrice,
+                            img: this.productAttr.img,
+                            speaker: this.productAttr.speaker,
+                            basic: this.productAttr.briefIntroduction,
                             ...(
                                 this.$route.query.id
                                     ? {id: this.$route.query.id}
@@ -339,17 +351,9 @@ export default {
                 this.typeList = [...res.data];
             });
         },
-        typeIdChange(val) {
-            this.type = this.typeList.filter(item => item.id === val)[0].type;
-            if (this.type === 1) {
-                this.productAttr.price = "";
-            } else {
-                this.productAttr.price = 0;
-            }
-        },
         uploadCoverSuccess(res) {
             if (res.errno === 0) {
-                this.productAttr.cover = res.data.path;
+                this.productAttr.img = res.data.path;
             }
         },
         uploadVideoSuccess(res, key) {

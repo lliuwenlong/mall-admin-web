@@ -5,15 +5,15 @@ export const TABLE_LIST_COLUMN = [
     },
     {
         label: '名字',
-        prop: 'title'
-    },
-    {
-        label: '分类',
-        prop: 'typeName'
+        prop: 'name'
     },
     {
         label: '价钱',
         prop: 'price'
+    },
+    {
+        label: 'vip价钱',
+        prop: 'vipPrice'
     },
     {
         label: '添加时间',

@@ -1,5 +1,6 @@
 <template>
     <div class="app-container">
+<<<<<<< HEAD
         <el-table show-header border :data="tableList">
             <el-table-column
                 v-for="(val, key) in tableListColumn"
@@ -84,4 +85,16 @@ export default {
 </script>
 
 <style lang="less" scoped>
+=======
+        123123123123123132123
+    </div>
+</template>
+<script>
+export default {
+    
+}
+</script>
+<style lang="less" scoped>
+
+>>>>>>> 08835ad79b70c5f9011ce36729204b2f3cc1b7e3
 </style>
