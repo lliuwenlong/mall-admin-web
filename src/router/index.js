@@ -78,6 +78,15 @@ export const constantRouterMap = [{
         }
     },
     {
+        path: 'labelAdmin',
+        name: 'labelAdmin',
+        component: () => import('@/views/basicsSetup/labelAdmin'),
+        meta: {
+            title: '标签管理',
+            icon: 'product-list'
+        }
+    },
+    {
         path: 'banner',
         name: 'banner',
         component: () => import('@/views/basicsSetup/banner'),
