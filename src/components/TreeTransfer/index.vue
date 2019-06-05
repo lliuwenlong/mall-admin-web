@@ -11,9 +11,9 @@
             :mode="mode"
             :lazyFn="loadNode"
             :defaultTransfer="true"
-            height="540px"
+            height="340px"
             filter
-            lazy
+            :lazy="lazy"
         ></tree-transfer>
     </div>
 </template>
@@ -37,11 +37,21 @@ export default {
             }
         };
     },
+    props:{
+        lazy:{
+            default:false,
+            type:Boolean
+        }
+    },
     async created() {
-        await getCity().then(res => {
-            this.fromData = res.data;
-        });
-        console.log(this.fromData)
+        if(this.lazy)
+            await getCity(1).then(res => {
+                this.fromData = res.data;
+            });
+        else
+            await getCity().then(res => {
+                this.fromData = res.data.children;
+            });
     },
     methods: {
         // 切换模式 现有树形穿梭框模式transfer 和通讯录模式addressList
@@ -57,15 +67,12 @@ export default {
                 type === "left" ||
                 (node.data.type != 3 && !node.data.children)
             ) {
-                console.log("加载子级");
                 getCity(node.data.id).then(res => {
                     resolve(res.data);
                 });
             } else if (node.data.children) {
-                console.log("显示子级");
                 resolve(node.data.children);
             } else {
-                console.log("已经是底层");
                 resolve([]);
             }
         },
@@ -73,17 +80,19 @@ export default {
         add(fromData, toData, obj) {
             // 树形穿梭框模式transfer时，返回参数为左侧树移动后数据、右侧树移动后数据、移动的{keys,nodes,halfKeys,halfNodes}对象
             // 通讯录模式addressList时，返回参数为右侧收件人列表、右侧抄送人列表、右侧密送人列表
-            console.log("fromData:", fromData);
-            console.log("toData:", toData);
-            console.log("obj:", obj);
+            // console.log("fromData:", fromData);
+            // console.log("toData:", toData);
+            // console.log("obj:", obj);
+            this.$emit('change',toData);
         },
         // 监听穿梭框组件移除
         remove(fromData, toData, obj) {
             // 树形穿梭框模式transfer时，返回参数为左侧树移动后数据、右侧树移动后数据、移动的{keys,nodes,halfKeys,halfNodes}对象
             // 通讯录模式addressList时，返回参数为右侧收件人列表、右侧抄送人列表、右侧密送人列表
-            console.log("fromData:", fromData);
-            console.log("toData:", toData);
-            console.log("obj:", obj);
+            // console.log("fromData:", fromData);
+            // console.log("toData:", toData);
+            // console.log("obj:", obj);
+            this.$emit('change',toData);
         }
     }
 };

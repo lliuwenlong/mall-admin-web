@@ -12,7 +12,8 @@ module.exports = {
         proxyTable: {
             '/api': {
                 // target: 'http://106.12.108.135:8900',
-                target: 'http://192.168.1.25:8900',
+                // target: 'http://192.168.1.25:8900',
+                target: 'http://127.0.0.1:8900',
                 changeOrigin: true
             }
         },

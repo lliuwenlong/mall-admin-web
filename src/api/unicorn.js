@@ -17,3 +17,18 @@ export function del(id) {
         }
     })
 }
+export function getTag() {
+    return request({
+        url: '/label/labelShow',
+        method: 'post'
+    })
+}
+export function addOrUpdate(data) {
+    return request({
+        url: '/unicorn/addOrUpdate',
+        method: 'post',
+        data
+    })
+}
+
+

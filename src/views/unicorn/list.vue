@@ -40,13 +40,14 @@
                     <template slot-scope="scope">{{scope.row.id}}</template>
                 </el-table-column>
                 <el-table-column label="标题" align="center" prop="title"></el-table-column>
-                <el-table-column label="简介" align="center" prop="basic"></el-table-column>
+                <el-table-column label="副标题" align="center" prop="subtitle"></el-table-column>
+                <el-table-column label="分类" align="center" prop="type"></el-table-column>
                 <el-table-column label="时间" align="center" prop="time"></el-table-column>
                 <el-table-column label="地点" align="center" prop="place"></el-table-column>
-                <el-table-column label="开播时间" align="center" prop="starttime"></el-table-column>
+                <el-table-column label="开播时间" align="center" prop="time"></el-table-column>
                 <el-table-column label="操作" width="240" align="center">
                     <template slot-scope="scope">
-                        <el-button size="mini" @click="xiugai(scope.row)">修改</el-button>
+                        <el-button size="mini" @click="edit(scope.row)">修改</el-button>
                         <el-button size="mini" type="danger" @click="del(scope.row.id)">删除</el-button>
                     </template>
                 </el-table-column>
@@ -75,8 +76,8 @@ export default {
         this.getList();
     },
     methods: {
-        xiugai(o) {
-            this.$router.push({ path: "underLineAdd", query: { data: o } });
+        edit(o) {
+            this.$router.push({ path: "add", query: { data: o } });
         },
         handleClose(done) {
             this.$confirm("确认关闭？")
@@ -85,35 +86,6 @@ export default {
                 })
                 .catch(_ => {});
         },
-        edit(o) {
-            this.editData = o;
-            if (o.status == 1) {
-                this.$prompt("请输入手机号码", "提示", {
-                    confirmButtonText: "确定",
-                    cancelButtonText: "取消",
-                    inputPattern: /^1[34578]\d{9}$/,
-                    inputErrorMessage: "格式不正确"
-                })
-                    .then(({ value }) => {
-                        this.editData.text = value;
-                        this.editFn();
-                    })
-                    .catch(() => {
-                        return;
-                    });
-            } else {
-                this.dialogVisible = true;
-            }
-        },
-        editFn() {
-            addOrUpdate(this.editData).then(res => {
-                this.$message({
-                    type: "success",
-                    message: res.errmsg
-                });
-                this.getList();
-            });
-        },
         getList() {
             this.listLoading = true;
             getList().then(response => {
@@ -121,7 +93,6 @@ export default {
                 this.list = response.data;
             });
         },
-
         handleSearchList() {
             this.listQuery.pageNum = 1;
             this.getList();

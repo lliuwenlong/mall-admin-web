@@ -17,10 +17,10 @@ import '@/icons' // icon
 import '@/permission' // permission control
 import VueSocketio from 'vue-socket.io';
 import socketio from 'socket.io-client';
-Vue.use(new VueSocketio({
-	debug: true,
-	connection: socketio('http://192.168.1.25:8900')
-}));
+// Vue.use(new VueSocketio({
+// 	debug: true,
+// 	connection: socketio('http://192.168.1.25:8900')
+// }));
 
 Vue.use(ElementUI, { locale })
 Vue.use(VCharts)
