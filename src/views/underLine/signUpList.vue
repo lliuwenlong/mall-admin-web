@@ -3,7 +3,14 @@
         <el-card class="operate-container" shadow="never">
             <i class="el-icon-tickets"></i>
             <span>查询列表</span>
-            <el-button class="btn-add" @click="handleAddProduct()" size="mini">添加</el-button>
+            <div style="margin-top: 20px;width: 600px;">
+                <el-input placeholder="请输入报名人姓名" style="width: 200px" v-model="name"></el-input>
+                <el-input placeholder="请输入活动名称" style="width: 200px;margin-left: 10px" v-model="title"></el-input>
+                <el-button @click="getList">搜索</el-button>
+                <el-button @click="reset">重置</el-button>
+            </div>
+
+           
         </el-card>
         <div class="table-container">
             <el-table
@@ -17,46 +24,29 @@
                 <el-table-column label="编号" width="100" align="center">
                     <template slot-scope="scope">{{scope.row.id}}</template>
                 </el-table-column>
-                <el-table-column label="活动名称" align="center" prop="name"></el-table-column>
-                <el-table-column label="地址" align="center" prop="place"></el-table-column>
-                <el-table-column label="票数" align="center" prop="num"></el-table-column>
-                <el-table-column label="时间段" align="center" prop="timeSlot">
-                    <template slot-scope="scope">
-                        {{moment(+scope.row.timeSlot[0]).format('YYYY-MM-DD hh:mm:ss')}}
-                        ～
-                        {{moment(+scope.row.timeSlot[1]).format('YYYY-MM-DD hh:mm:ss')}}
-                    </template>
+                <el-table-column label="活动名称" align="center">
+                    <template slot-scope="scope">{{scope.row.title}}</template>
                 </el-table-column>
-                <el-table-column label="头像" align="center" prop="contactsImg">
-                    <template slot-scope="scope">
-                        <img :src="imgPath()+scope.row.contactsImg" alt style="width:100%" />
-                    </template>
+                <el-table-column label="报名人姓名"  align="center">
+                    <template slot-scope="scope">{{scope.row.name}}</template>
                 </el-table-column>
-                <el-table-column label="姓名" align="center" prop="contactsName"></el-table-column>
-                <el-table-column label="电话" align="center" prop="contactsTel"></el-table-column>
-
-                <el-table-column label="操作" width="240" align="center">
-                    <template slot-scope="scope">
-                        <el-button size="mini" @click="xiugai(scope.row)">修改</el-button>
-                        <el-button size="mini" type="danger" @click="delect(scope.row.id)">删除</el-button>
-                    </template>
+                <el-table-column label="报名人电话"  align="center">
+                    <template slot-scope="scope">{{scope.row.user_tel}}</template>
+                </el-table-column>
+                <el-table-column label="报名人时间"  align="center">
+                    <template slot-scope="scope">{{scope.row.addtime}}</template>
                 </el-table-column>
             </el-table>
         </div>
-        <el-dialog title="提示" :visible.sync="dialogVisible" width="645px">
-            <tinymce :width="595" :height="300" v-model="editData.text"></tinymce>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-            </span>
-        </el-dialog>
     </div>
 </template>
 <script>
 import { getList, del, addOrUpdate } from "@/api/underLine";
+import request from "@/utils/request";
 import Tinymce from "@/components/Tinymce";
 import { imgPath } from "@/utils/imgPath";
 import moment from 'moment';
+import { filterObject } from "@/utils/index";
 export default {
     name: "productList",
     components: { tinymce: Tinymce },
@@ -67,7 +57,8 @@ export default {
             dialogVisible: false,
             editData: {},
             listLoading: true,
-            moment: moment
+            name: '',
+            title: ''
         };
     },
     created() {
@@ -118,9 +109,16 @@ export default {
         },
         getList() {
             this.listLoading = true;
-            getList().then(response => {
+            request.post('/underLine/getSignUpList', {
+                ...filterObject({
+                    name: this.name,
+                    title: this.title
+                })
+            }).then(response => {
                 this.listLoading = false;
-                this.list = response.data;
+                this.list = response.data.map(item => {
+                    return {...item, addtime: moment(+item.addtime).format('YYYY-MM-DD')};
+                });
             });
         },
         delect(id) {
@@ -139,6 +137,11 @@ export default {
                     });
                 })
                 .catch(() => {});
+        },
+        reset () {
+            this.title = '';
+            this.name = '';
+            this.getList();
         }
     }
 };

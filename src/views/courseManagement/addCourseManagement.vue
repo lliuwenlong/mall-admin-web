@@ -41,7 +41,20 @@
                 </el-select>
             </el-form-item>
             <el-form-item
-                v-if="type === 1"
+                label="是否为套餐"
+                prop="isSetMeal"
+                v-if="type === 2"
+                :rules="[
+                    { required: true, message: '至少选择一项', trigger: 'blur' },
+                ]"
+            >
+                <el-radio-group v-model="productAttr.isSetMeal">
+                    <el-radio :label="1">是</el-radio>
+                    <el-radio :label="0">否</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item
+                v-if="type === 2 && productAttr.isSetMeal == 0"
                 label="价格"
                 prop="price"
                 :rules="[
@@ -50,6 +63,37 @@
             >
                 <el-input v-model.number="productAttr.price"></el-input>
             </el-form-item>
+            <el-form-item
+                v-if="type === 2 && productAttr.isSetMeal == 1"
+                label="低级课程价格"
+                prop="lowerPrice"
+                :rules="[
+                    { required: true, message: '请输入价格', trigger: 'blur' },
+                ]"
+            >
+                <el-input v-model.number="productAttr.lowerPrice"></el-input>
+            </el-form-item>
+            <el-form-item
+                v-if="type === 2 && productAttr.isSetMeal == 1"
+                label="中级课程价格"
+                prop="intermediatePrice"
+                :rules="[
+                    { required: true, message: '请输入价格', trigger: 'blur' },
+                ]"
+            >
+                <el-input v-model.number="productAttr.intermediatePrice"></el-input>
+            </el-form-item>
+            <el-form-item
+                v-if="type === 2 && productAttr.isSetMeal == 1"
+                label="高级课程价格"
+                prop="seniorPrice"
+                :rules="[
+                    { required: true, message: '请输入价格', trigger: 'blur' },
+                ]"
+            >
+                <el-input v-model.number="productAttr.seniorPrice"></el-input>
+            </el-form-item>
+
             <el-form-item label="详情介绍" prop="content">
                 <tinymce :width="595" :height="300" v-model="productAttr.content"></tinymce>
             </el-form-item>
@@ -73,7 +117,7 @@
                     :underline="false"
                 >{{productAttr.cover ? '已上传' : '未上传'}}</el-link>
                 <div class="cover" v-if="productAttr.cover">
-                    <img :src="getUrl(productAttr.cover)" alt>
+                    <img :src="getUrl(productAttr.cover)" alt />
                 </div>
             </el-form-item>
             <el-form-item label="上传课程">
@@ -100,9 +144,7 @@
                                 class="medium-btn"
                                 type="primary"
                                 style="margin-left: 10px"
-                            >
-                                {{productAttr.classHour[key].audio ? '替换音频' : '上传音频'}}
-                            </el-button>
+                            >{{productAttr.classHour[key].audio ? '替换音频' : '上传音频'}}</el-button>
                         </chunckFileUpload>
                         <el-link
                             :type="productAttr.classHour[key].audio ? 'success' : 'danger'"
@@ -115,10 +157,11 @@
                             @onSuccess="res => uploadVideoSuccess(res, key)"
                             accept=".mp4, .MP4, .avi, .AVI"
                         >
-                            <el-button size="medium" class="medium-btn" type="primary">
-                                {{productAttr.classHour[key].video ? '替换视频' : '上传视频'}}
-                                
-                            </el-button>
+                            <el-button
+                                size="medium"
+                                class="medium-btn"
+                                type="primary"
+                            >{{productAttr.classHour[key].video ? '替换视频' : '上传视频'}}</el-button>
                         </chunckFileUpload>
                         <el-link
                             :type="productAttr.classHour[key].video ? 'success' : 'danger'"
@@ -135,9 +178,10 @@
                 </div>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="submitForm('ruleForm')">
-                    {{$route.query.id ? '保存' : '立即创建'}}
-                </el-button>
+                <el-button
+                    type="primary"
+                    @click="submitForm('ruleForm')"
+                >{{$route.query.id ? '保存' : '立即创建'}}</el-button>
                 <el-button @click="resetForm('ruleForm')" v-if="!$route.query.id">重置</el-button>
             </el-form-item>
         </el-form>
@@ -160,7 +204,11 @@ export default {
                 classHour: [],
                 typeId: "",
                 price: 0,
-                cover: ""
+                cover: "",
+                isSetMeal: 0,
+                lowerPrice: 0,
+                intermediatePrice: 0,
+                seniorPrice: 0
             },
             typeList: [],
             type: "",
@@ -170,12 +218,26 @@ export default {
     created() {
         this.getTypeList();
         if (this.$route.query.id) {
-            const task = request.post("/curriculum/getList", {id: this.$route.query.id});
-            const curriculumList = request.post("/common/getCurriculumList", {id: this.$route.query.id, type: 0});
+            const task = request.post("/curriculum/getList", {
+                id: this.$route.query.id
+            });
+            const curriculumList = request.post("/common/getCurriculumList", {
+                id: this.$route.query.id,
+                type: 0
+            });
             Promise.all([task, curriculumList]).then(res => {
                 let [list, curriculumList] = res;
                 if (list.errno === 0) {
-                    const {content, price, title: name, type_id: typeId, subtitle: subTitle, cover} = list.data[0];
+                    const {
+                        content,
+                        price,
+                        title: name,
+                        type_id: typeId,
+                        subtitle: subTitle,
+                        cover,
+                        type
+                    } = list.data[0];
+                    this.type = type;
                     this.productAttr = {
                         ...this.productAttr,
                         content,
@@ -198,7 +260,7 @@ export default {
                                 type: item.type,
                                 c_id: this.$route.query.id,
                                 id: item.id
-                            }
+                            };
                         })
                     };
                 }
@@ -256,38 +318,45 @@ export default {
                         }
                     }
                     if (flag) {
-                        request.post('/curriculum/addOrUpdate', {
-                            title: this.productAttr.name,
-                            subtitle: this.productAttr.subTitle,
-                            content: this.productAttr.content,
-                            list: this.productAttr.classHour,
-                            type_id: this.productAttr.typeId,
-                            price: this.productAttr.price,
-                            cover: this.productAttr.cover,
-                            ...(
-                                this.$route.query.id
-                                    ? {id: this.$route.query.id}
+                        request
+                            .post("/curriculum/addOrUpdate", {
+                                title: this.productAttr.name,
+                                subtitle: this.productAttr.subTitle,
+                                content: this.productAttr.content,
+                                list: this.productAttr.classHour,
+                                type_id: this.productAttr.typeId,
+                                price: this.productAttr.price,
+                                cover: this.productAttr.cover,
+                                ...(this.type == 2
+                                    ? {
+                                        is_setmeal: this.productAttr.isSetMeal,
+                                        lower_price: this.productAttr.lowerPrice,
+                                        intermediate_price: this.productAttr.intermediatePrice,
+                                        senior_price: this.productAttr.seniorPrice
+                                    }
                                     : {}
-                            ),
-                            ...(
-                                this.$route.query.id
-                                    ? {deleteId: this.deleteId}
-                                    : {}
-                            )
-                        }).then(res => {
-                            if (res.errno === 0) {
-                                this.$message({
-                                    type: 'success',
-                                    message: res.errmsg
-                                });
-                                this.$router.push('showList');
-                            } else {
-                                this.$message({
-                                    type: 'warning',
-                                    message: res.errmsg
-                                });
-                            }
-                        });
+                                ),
+                                ...(this.$route.query.id
+                                    ? { id: this.$route.query.id }
+                                    : {}),
+                                ...(this.$route.query.id
+                                    ? { deleteId: this.deleteId }
+                                    : {})
+                            })
+                            .then(res => {
+                                if (res.errno === 0) {
+                                    this.$message({
+                                        type: "success",
+                                        message: res.errmsg
+                                    });
+                                    this.$router.push("showList");
+                                } else {
+                                    this.$message({
+                                        type: "warning",
+                                        message: res.errmsg
+                                    });
+                                }
+                            });
                     } else {
                         this.$alert(
                             `请完成${content.join(",")}内容上传或填写`,
@@ -314,7 +383,7 @@ export default {
                 price: 0,
                 cover: ""
             };
-            this.type = '';
+            this.type = "";
             this.$refs.productAttrFrom.resetFields();
         },
         deleteClass(key) {
@@ -324,7 +393,7 @@ export default {
             productAttr.classHour = [...classHour];
             this.productAttr = { ...productAttr };
             if (data[0] && data[0].id) {
-                this.deleteId = [...this.deleteId, data[0].id]
+                this.deleteId = [...this.deleteId, data[0].id];
             }
         },
         uploadAudioSuccess(res, key) {
@@ -336,7 +405,7 @@ export default {
         },
         getTypeList() {
             request.post("/system/getCurriculumType").then(res => {
-                this.typeList = [...res.data];
+                this.typeList = [...res.data].filter(item => item.type != 1);
             });
         },
         typeIdChange(val) {
@@ -345,6 +414,10 @@ export default {
                 this.productAttr.price = "";
             } else {
                 this.productAttr.price = 0;
+                this.productAttr.isSetMeal =  0;
+                this.productAttr.lowerPrice = 0;
+                this.productAttr.intermediatePrice = 0;
+                this.productAttr.seniorPrice = 0;
             }
         },
         uploadCoverSuccess(res) {

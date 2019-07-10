@@ -7,6 +7,29 @@
             <el-form-item label="副标题" prop="subtitle">
                 <el-input v-model="productAttr.subtitle"></el-input>
             </el-form-item>
+            <el-form-item label="封面图片" prop="relevant_information">
+                <chunckFileUpload
+                    style="display: inline-block"
+                    :show-file-list="false"
+                    @onSuccess="res => {
+                        productAttr.img = res.data;
+                        productAttr={...productAttr};
+                    }"
+                    accept=".png, .jpg, .jpeg"
+                >
+                    <el-button
+                        size="medium"
+                        class="medium-btn"
+                        type="primary"
+                        style="margin-left: 10px"
+                    >点击上传</el-button>
+                </chunckFileUpload>
+                <el-link
+                    :type="productAttr.img ? 'success' : 'danger'"
+                    class="label"
+                    :underline="false"
+                >{{productAttr.img ? '已上传' : '未上传'}}</el-link>
+            </el-form-item>
             <el-form-item label="项目咨询人">
                 <el-form class="class-list" inline :model="productAttr">
                     <el-form-item
@@ -20,12 +43,12 @@
                     </el-form-item>
                     <el-form-item
                         prop="tel"
-                        label="职务"
+                        label="联系电话"
                         :rules="[{
-                            required: true, message: '请输入职务', trigger: 'blur'
+                            required: true, message: '请输入联系电话', trigger: 'blur'
                         }]"
                     >
-                        <el-input class="input-mini" placeholder="请输入职务" v-model="productAttr.tel"></el-input>
+                        <el-input class="input-mini" placeholder="请输入联系电话" v-model="productAttr.tel"></el-input>
                     </el-form-item>
                     <el-form-item label="头像" required>
                         <chunckFileUpload
@@ -66,7 +89,6 @@
             <el-form-item label="地点" prop="place">
                 <el-cascader
                     :options="options.place.data"
-                    :props="options.place.props"
                     v-model="productAttr.place"
                     clearable
                 ></el-cascader>
@@ -75,7 +97,7 @@
             <el-form-item label="基本信息" prop="basic">
                 <tinymce :width="595" :height="200" v-model="productAttr.basic"></tinymce>
             </el-form-item>
-            <el-form-item label="详细信息" prop="details">
+            <el-form-item label="项目信息" prop="details">
                 <el-button size="medium" @click="addForm('details')">添加信息</el-button>
                 <el-form
                     v-for="(val, key) in productAttr.details"
@@ -114,15 +136,15 @@
             <el-form-item label="选择标签" prop="unicorn_tags">
                 <el-select v-model="productAttr.unicorn_tags" multiple filterable placeholder="请选择">
                     <el-option
-                        v-for="item in options.tag"
-                        :key="item.id"
+                        v-for="(item, key) in options.tag"
+                        :key="key"
                         :label="item.name"
                         :value="item.id"
                     ></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="可抢占城市" prop="unicorn_city">
-                <tree-transfer @change="cityChange"></tree-transfer>
+                <tree-transfer @change="cityChange" :cityData="productAttr.unicorn_city"></tree-transfer>
             </el-form-item>
             <el-form-item label="融资信息" prop="unicorn_info">
                 <el-button size="medium" @click="addForm('unicorn_info')">添加信息</el-button>
@@ -142,6 +164,21 @@
                         }]"
                     >
                         <el-input class="input-mini" placeholder="融资情况（*轮）" v-model="val.name"></el-input>
+                    </el-form-item>
+                    <el-form-item
+                        prop="time"
+                        label="融资时间"
+                        :rules="[{
+                            required: true, message: '输入融资时间', trigger: 'change'
+                        }]"
+                    >
+                        <el-date-picker
+                            v-model="val.time"
+                            type="date"
+                            value-format="yyyy-MM-dd"
+                            placeholder="选择日期"
+                        >
+                        </el-date-picker>
                     </el-form-item>
                     <el-form-item
                         prop="price"
@@ -287,6 +324,29 @@
                     >删除</el-button>
                 </el-form>
             </el-form-item>
+            <el-form-item label="相关资讯" prop="relevant_information">
+                <chunckFileUpload
+                    style="display: inline-block"
+                    :show-file-list="false"
+                    @onSuccess="res => {
+                        productAttr.relevant_information = res.data;
+                        productAttr={...productAttr};
+                    }"
+                    accept=".png, .jpg, .jpeg"
+                >
+                    <el-button
+                        size="medium"
+                        class="medium-btn"
+                        type="primary"
+                        style="margin-left: 10px"
+                    >点击上传</el-button>
+                </chunckFileUpload>
+                <el-link
+                    :type="productAttr.relevant_information ? 'success' : 'danger'"
+                    class="label"
+                    :underline="false"
+                >{{productAttr.relevant_information ? '已上传' : '未上传'}}</el-link>
+            </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="onSubmit('productAttrFrom')">提交</el-button>
                 <el-button v-if="!isEdit" @click="resetForm('productAttrFrom')">重置</el-button>
@@ -328,30 +388,7 @@ export default {
             options: {
                 tag: [],
                 place: {
-                    data: [],
-                    props: {
-                        lazy: true,
-                        checkStrictly: true,
-                        lazyLoad(node, resolve) {
-                            if (node.level === 0)
-                                getCity(1).then(res => {
-                                    resolve(res.data);
-                                });
-                            else
-                                getCity(node.data.id).then(res => {
-                                    resolve(
-                                        res.data.map(v => {
-                                            if (v.type == 3) {
-                                                v.leaf = true;
-                                            }
-                                            return v;
-                                        })
-                                    );
-                                });
-                        },
-                        label: "cityname",
-                        value: "cityname"
-                    }
+                    data: []
                 }
             }
         };
@@ -361,8 +398,42 @@ export default {
         await getTag().then(res => {
             this.options.tag = res.data;
         });
-        if (this.$route.query.data && this.$route.query.data.name)
+        await getCity().then(res => {
+            const cityData = res.data;
+            this.options.place.data = res.data.children.map(item => {
+                return {
+                    value: item.cityname,
+                    label: item.cityname,
+                    ...(
+                        item.children
+                        ? {children: item.children.map(val => {
+                            return {
+                                value: val.cityname,
+                                label: val.cityname,
+                                ...(
+                                    val.children
+                                    ? {children: val.children.map(v => {
+                                        return {
+                                            value: v.cityname,
+                                            label: v.cityname,
+                                        };
+                                    })}
+                                    : {}
+                                )
+                            };
+                        })}
+                        : {}
+                    )
+                };
+            });
+        });
+        if (this.$route.query.data && this.$route.query.data.name) {
             this.productAttr = this.$route.query.data;
+            this.productAttr.place = this.$route.query.data.place && this.$route.query.data.place.split
+                ? this.$route.query.data.place.split('-')
+                : []
+        }
+            
     },
     methods: {
         addForm(key) {
@@ -397,7 +468,7 @@ export default {
                                     type: "success",
                                     duration: 1000
                                 });
-                                this.$router.push({ path: "giftCardList" });
+                                this.$router.push({ path: "list" });
                             });
                         } else {
                             addOrUpdate(this.productAttr).then(response => {
@@ -407,7 +478,7 @@ export default {
                                     duration: 1000
                                 });
                                 this.resetForm("productAttrFrom");
-                                this.$router.push({ path: "giftCardshow" });
+                                this.$router.push({ path: "list" });
                             });
                         }
                     });

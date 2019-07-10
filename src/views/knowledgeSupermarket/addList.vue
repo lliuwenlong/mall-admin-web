@@ -25,6 +25,18 @@
                 <el-input v-model="productAttr.subTitle"></el-input>
             </el-form-item>
             <el-form-item
+                label="类型"
+                prop="type"
+                :rules="[
+                    { required: true, message: '请选择类型', trigger: 'change' },
+                ]"
+            >
+                <el-select v-model="productAttr.type">
+                    <el-option label="专辑" :value="1"></el-option>
+                    <el-option label="精品" :value="2"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item
                 label="价格"
                 prop="price"
                 :rules="[
@@ -166,7 +178,8 @@ export default {
                 img: "",
                 speaker: '',
                 vipPrice: '',
-                briefIntroduction: ''
+                briefIntroduction: '',
+                type: ''
             },
             typeList: [],
             deleteId: []
@@ -276,6 +289,7 @@ export default {
                             img: this.productAttr.img,
                             speaker: this.productAttr.speaker,
                             basic: this.productAttr.briefIntroduction,
+                            type: this.productAttr.type,
                             ...(
                                 this.$route.query.id
                                     ? {id: this.$route.query.id}

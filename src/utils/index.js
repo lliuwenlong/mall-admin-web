@@ -85,3 +85,38 @@ export const gcd = (x, y) => {
 	}
 	return min;
 };
+
+export const filterObject = (param) => {
+	let obj = { ...param };
+    for (const key in obj) {
+        if (obj[key] == undefined || obj[key] === '') {
+            delete obj[key];
+        }
+    };
+    return obj;
+};
+
+export const getCityData = (data, cityData) => {
+	const city = [...cityData];
+	const county = data.filter(item => city.includes(String(item.id)));
+	const countyId = county.map(val => val.pid)
+	const cityArr = data.filter(item => countyId.includes(item.id));
+	const cityId = cityArr.map(item => item.pid);
+	const province = data.filter(item => cityId.includes(item.id));
+	const arr = [...county, ...cityArr, ...province];
+	return arr;
+};
+
+export const cityData = (arr, pid = 1) => {
+	let data = [];
+	for (let i = 0; i < arr.length; i++) {
+		if (arr[i].pid === pid) {
+			const obj = arr[i];
+			if (arr[i].type !== 3) {
+				obj['children'] = cityData(arr, obj.id);
+			}
+			data.push(obj);
+		}
+	}
+	return data;
+};

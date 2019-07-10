@@ -21,6 +21,8 @@
 <script>
 import treeTransfer from "el-tree-transfer";
 import { getCity } from "@/api/common";
+import request from "@/utils/request";
+import {getCityData, cityData} from "@/utils/index";
 export default {
     components: { treeTransfer },
     data() {
@@ -41,6 +43,12 @@ export default {
         lazy:{
             default:false,
             type:Boolean
+        },
+        cityData: {
+            type: Array,
+            default: function () {
+                return [];
+            }
         }
     },
     async created() {
@@ -52,6 +60,12 @@ export default {
             await getCity().then(res => {
                 this.fromData = res.data.children;
             });
+        request.post('/common/getAllCity').then(res => {
+            const data = res.data;
+            const arr = getCityData(data, this.cityData);
+            const city = cityData(arr);
+            this.toData = [...city];
+        });
     },
     methods: {
         // 切换模式 现有树形穿梭框模式transfer 和通讯录模式addressList

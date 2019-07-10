@@ -1,1 +1,1 @@
-export const PUBLIC_PATH = 'http://192.168.1.25:8900/';
+export const PUBLIC_PATH = 'http://106.12.108.135:8900/';

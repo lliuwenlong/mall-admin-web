@@ -4,17 +4,39 @@
             <el-form-item label="活动名称" prop="name">
                 <el-input v-model="productAttr.name"></el-input>
             </el-form-item>
-            <el-form-item label="地址" prop="place">
+            <el-form-item label="票数" prop="num">
+                <el-input v-model="productAttr.num"></el-input>
+            </el-form-item>
+            <el-form-item label="分类" prop="cityId">
+                <el-select v-model="productAttr.type_id">
+                    <el-option
+                        v-for="(item, key) in typeList"
+                        :key="key"
+                        :label="item.type_name"
+                        :value="item.id"
+                    >
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="城市" prop="cityId">
+                <el-select v-model="productAttr.cityId">
+                    <el-option
+                        v-for="(item, key) in cityList"
+                        :key="key"
+                        :label="item.cityname"
+                        :value="item.id"
+                    >
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="详细地址" prop="place">
                 <el-input v-model="productAttr.place"></el-input>
             </el-form-item>
             <el-form-item label="内容" prop="content">
                 <tinymce :width="595" :height="300" v-model="productAttr.content"></tinymce>
             </el-form-item>
-            <el-form-item label="起始价格" width="120" align="center">
+            <el-form-item label="价格" width="120" align="center">
                 <el-input v-model="productAttr.startPrice"></el-input>
-            </el-form-item>
-            <el-form-item label="结束价格" width="120" align="center">
-                <el-input v-model="productAttr.endPrice"></el-input>
             </el-form-item>
             <el-form-item label="时间段" width="120">
                 <el-date-picker
@@ -54,7 +76,8 @@
 import { addOrUpdate } from "@/api/underLine";
 import Tinymce from "@/components/Tinymce";
 import { imgPath } from "@/utils/imgPath";
-
+import request from '@/utils/request';
+import moment from 'moment';
 const defaultProductAttr = {
     name: "",
     purchaseInstructions: "",
@@ -62,7 +85,10 @@ const defaultProductAttr = {
     coverPhoto: "",
     isMod: false,
     content: "",
-    timeSlot: []
+    timeSlot: [],
+    cityId: '',
+    type_id: '',
+    num: ''
 };
 export default {
     components: { tinymce: Tinymce },
@@ -76,7 +102,7 @@ export default {
     data() {
         return {
             imgPath,
-            productAttr: Object.assign({}, defaultProductAttr),
+            productAttr: {...Object.assign({}, defaultProductAttr)},
             dialogImageUrl: "",
             dialogVisible: false,
             rules: {
@@ -95,15 +121,29 @@ export default {
                 ]
             },
             productAttrCateList: null,
-            inputListFormat: null
+            inputListFormat: null,
+            cityList: [],
+            typeList: []
         };
     },
     created() {
         this.resetProductAttr();
-        if (this.$route.query.data && this.$route.query.data.name)
-            this.productAttr = this.$route.query.data;
-        // }
-        // this.getCateList();
+        this.getCity();
+        request.post('/underLine/undertype').then(response => {
+            this.typeList = response.data;
+        });
+    },
+    mounted () {
+        if (this.$route.query.data && this.$route.query.data.name) {
+            this.productAttr = {
+                ...this.$route.query.data,
+                cityId: this.$route.query.data.attr_id ? this.$route.query.data.attr_id : '',
+                timeSlot: [
+                    moment(+this.$route.query.data.timeSlot[0]).format('YYYY-MM-DD hh:mm:ss'),
+                    moment(+this.$route.query.data.timeSlot[1]).format('YYYY-MM-DD hh:mm:ss')
+                ]
+            }
+        }
     },
     watch: {
         inputListFormat: function(newValue, oldValue) {
@@ -128,7 +168,11 @@ export default {
                         type: "warning"
                     }).then(() => {
                         if (this.isEdit) {
-                            addOrUpdate(this.productAttr).then(response => {
+                            addOrUpdate({
+                                ...this.productAttr,
+                                type_id: this.productAttr.type_id,
+                                timeSlot: [moment(this.productAttr.timeSlot[0]).valueOf(), moment(this.productAttr.timeSlot[1]).valueOf()]
+                            }).then(response => {
                                 this.$message({
                                     message: "修改成功",
                                     type: "success",
@@ -137,7 +181,11 @@ export default {
                                 this.$router.push({ path: "giftCardList" });
                             });
                         } else {
-                            addOrUpdate(this.productAttr).then(response => {
+                            addOrUpdate({
+                                ...this.productAttr,
+                                type_id: this.productAttr.type_id,
+                                timeSlot: [moment(this.productAttr.timeSlot[0]).valueOf(), moment(this.productAttr.timeSlot[1]).valueOf()]
+                            }).then(response => {
                                 this.$message({
                                     message: "提交成功",
                                     type: "success",
@@ -168,6 +216,13 @@ export default {
                 this.$route.query.cid
             );
             this.productAttr.type = Number(this.$route.query.type);
+        },
+        getCity () {
+            request.post("/common/getCity", {pid: 0}).then(res => {
+                if (res.errno == 0) {
+                    this.cityList = res.data.children;
+                }
+            });
         }
     }
 };

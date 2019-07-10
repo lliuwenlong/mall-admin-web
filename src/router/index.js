@@ -104,6 +104,24 @@ export const constantRouterMap = [
                 title: 'banner管理',
                 icon: 'product-list'
             }
+        },
+        {
+            path: 'receivingCourses',
+            name: 'receivingCourses',
+            component: () => import('@/views/basicsSetup/receivingCourses'),
+            meta: {
+                title: '设置签到课程',
+                icon: 'product-list'
+            }
+        },
+        {
+            path: 'userGuide',
+            name: 'userGuide',
+            component: () => import('@/views/basicsSetup/userGuide'),
+            meta: {
+                title: '设置用户指南',
+                icon: 'product-list'
+            }
         }
         ],
     },
@@ -161,6 +179,22 @@ export const constantRouterMap = [
                 title: '线下管理展示',
                 icon: 'xianxia'
             }
+        }, {
+            path: 'giftCardType',
+            name: 'giftCardType',
+            component: () => import('@/views/underLine/giftCardType'),
+            meta: {
+                title: '线下活动分类',
+                icon: 'xianxia'
+            }
+        }, {
+            path: 'signUpList',
+            name: 'signUpList',
+            component: () => import('@/views/underLine/signUpList'),
+            meta: {
+                title: '报名列表',
+                icon: 'xianxia'
+            }
         }]
     },
     {
@@ -208,6 +242,15 @@ export const constantRouterMap = [
             component: () => import('@/views/courseManagement/addCourseManagement'),
             meta: {
                 title: '添加/修改课程',
+                icon: 'sms-flash'
+            }
+        },
+        {
+            path: 'buyingCourses',
+            name: 'buyingCourses',
+            component: () => import('@/views/courseManagement/buyingCourses'),
+            meta: {
+                title: '购买课程列表',
                 icon: 'sms-flash'
             }
         }
@@ -271,6 +314,25 @@ export const constantRouterMap = [
         ]
     },
     {
+        path: '/orderList',
+        component: Layout,
+        name: 'orderList',
+        redirect: '/orderList/orderList',
+        meta: {
+            title: '订单列表',
+            icon: 'sms'
+        },
+        children: [{
+            path: 'orderList',
+            name: 'orderList',
+            component: () => import('@/views/basicsSetup/orderList'),
+            meta: {
+                title: '订单列表',
+                icon: 'sms-flash'
+            }
+        }]
+    },
+    {
         path: '/unicornManagement',
         component: Layout,
         name: 'unicornManagement',
@@ -295,7 +357,15 @@ export const constantRouterMap = [
                 title: '添加项目',
                 icon: 'sms-flash'
             }
-        },]
+        }, {
+            path: 'seize',
+            name: 'seize',
+            component: () => import('@/views/unicorn/seize'),
+            meta: {
+                title: '抢占项目',
+                icon: 'sms-flash'
+            }
+        }]
     },
     {
         path: '*',

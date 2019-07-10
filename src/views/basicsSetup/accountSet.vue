@@ -15,7 +15,7 @@
                 <el-button type="danger" @click="deleteList(key.split('-')[1])" style="margin-left: 10px;">删除</el-button>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="submitForm('form')">提交</el-button>
+                <el-button type="primary" @click="submitForm('form')" v-if="Object.keys(form).length">提交</el-button>
                 <el-button type="primary" @click="addList">添加一条</el-button>
             </el-form-item>
         </el-form>

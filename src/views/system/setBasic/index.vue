@@ -26,10 +26,10 @@
             </el-table>
         </div>
         <el-dialog title="提示" :visible.sync="dialogVisible" width="645px">
-            <tinymce :width="595" :height="300" v-model="editData.text"></tinymce>
+            <tinymce :width="595" :height="300" id="10" v-model="text"></tinymce>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                <el-button @click="cancelSubmit">取 消</el-button>
+                <el-button type="primary" @click="okSubmit">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -46,7 +46,9 @@ export default {
             list: null,
             dialogVisible: false,
             editData: {},
-            listLoading:true
+            listLoading:true,
+            timer: null,
+            text: ''
         };
     },
     created() {
@@ -62,6 +64,10 @@ export default {
         },
         edit(o) {
             this.editData = o;
+            this.text = o.text;
+            this.$nextTick(() => {
+                window.tinymce.get('10').setContent(this.text);
+            });
             if (o.status == 1) {
                 this.$prompt("请输入手机号码", "提示", {
                     confirmButtonText: "确定",
@@ -70,7 +76,7 @@ export default {
                     inputErrorMessage: "格式不正确"
                 })
                     .then(({ value }) => {
-                        this.editData.text=value;
+                        this.editData.text = value;
                         this.editFn()
                     })
                     .catch(() => {
@@ -93,7 +99,9 @@ export default {
             this.listLoading = true;
             Basic().then(response => {
                 this.listLoading = false;
-                this.list = response.data;
+                this.list = response.data.length
+                    ? response.data.filter(item => item.status != '3')
+                    : [];
             });
         },
         
@@ -112,6 +120,18 @@ export default {
                     this.getList();
                 })
                 .catch(() => {});
+        },
+        cancelSubmit () {
+            this.dialogVisible = false;
+            this.text = '';
+        },
+        okSubmit () {
+            this.editData = {
+                ...this.editData,
+                text: this.text
+            };
+            this.editFn();
+            this.cancelSubmit();
         }
     }
 };

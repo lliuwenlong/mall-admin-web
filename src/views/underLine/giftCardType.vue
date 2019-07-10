@@ -11,27 +11,11 @@
                 <el-table-column label="编号" width="100" align="center">
                     <template slot-scope="scope">{{scope.row.id}}</template>
                 </el-table-column>
-                <el-table-column label="名称" align="center" prop="name"></el-table-column>
-                <el-table-column label="排序" width="120" align="center">
-                    <template slot-scope="scope">
-                        <el-input-number
-                            @change="editFn(scope.row.id,scope.row.name,scope.row.sort)"
-                            type="number"
-                            v-model="scope.row.sort"
-                            style="width:90px;"
-                            size="mini"
-                        />
-                    </template>
-                </el-table-column>
+                <el-table-column label="名称" align="center" prop="type_name"></el-table-column>
                 <el-table-column label="删除" width="240" align="center">
                     <template slot-scope="scope">
                         <el-button size="mini" @click="edit(scope.row)">编辑</el-button>
-                        <el-button
-                            size="mini"
-                            type="danger"
-                            @click="del(scope.row.id)"
-                            v-if="scope.row.type == 0"
-                        >删除</el-button>
+                        <el-button size="mini" type="danger" @click="del(scope.row.id)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -44,7 +28,7 @@ import {
     updateCurriculumType,
     delcurriculumType
 } from "@/api/system";
-
+import request from '@/utils/request'
 export default {
     name: "productList",
     data() {
@@ -66,8 +50,8 @@ export default {
                 })
                 .catch(() => {});
         },
-        editFn(id, name, sort = null) {
-            updateCurriculumType({ id, name, sort }).then(res => {
+        editFn(id, name) {
+            request.post('/underLine/undertypeadd', { id, type_name: name }).then(res => {
                 this.$message({
                     type: "success",
                     message: res.errmsg
@@ -76,16 +60,20 @@ export default {
             });
         },
         add() {
-            this.$prompt("输入文件名称", "提示", {
+            this.$prompt("输入名称", "提示", {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消"
             })
                 .then(({ value }) => {
-                    updateCurriculumType({ name: value }).then(res => {
-                        this.$message({
-                            type: "success",
-                            message: res.errmsg
-                        });
+                     request.post('/underLine/undertypeadd', {
+                        type_name: value 
+                     }).then(res => {
+                        if (res.errno == 0) {
+                            this.$message({
+                                type: "success",
+                                message: res.errmsg
+                            });
+                        }
                     });
                     this.getList();
                 })
@@ -98,7 +86,9 @@ export default {
                 type: "warning"
             })
                 .then(() => {
-                    delcurriculumType(id).then(() => {
+                    request.post('/underLine/undertypeDel', {
+                        id
+                    }).then(() => {
                         this.$message({
                             type: "success",
                             message: "删除成功!"
@@ -110,7 +100,7 @@ export default {
         },
         getList() {
             this.listLoading = true;
-            getCurriculumType().then(response => {
+            request.post('/underLine/undertype').then(response => {
                 this.listLoading = false;
                 this.list = response.data;
             });
@@ -119,5 +109,3 @@ export default {
 };
 </script>
 <style></style>
-
-

@@ -12,13 +12,13 @@ module.exports = {
         proxyTable: {
             '/api': {
                 // target: 'http://106.12.108.135:8900',
-                // target: 'http://192.168.1.25:8900',
-                target: 'http://127.0.0.1:8900',
+                target: 'http://192.168.1.10:8900',
+                // target: 'http://192.168.1.24:9900',
                 changeOrigin: true
             }
         },
         // Various Dev Server settings
-        host: 'localhost', // can be overwritten by process.env.HOST
+        host: '0.0.0.0', // can be overwritten by process.env.HOST
         port: 8090, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
         autoOpenBrowser: false,
         errorOverlay: true,
@@ -43,12 +43,12 @@ module.exports = {
 
     build: {
         // Template for index.html
-        index: path.resolve(__dirname, '../dist/index.html'),
+        index: path.resolve(__dirname, '../dist/admin/index.html'),
 
         // Paths
-        assetsRoot: path.resolve(__dirname, '../dist'),
+        assetsRoot: path.resolve(__dirname, '../dist/admin'),
         assetsSubDirectory: 'static',
-        assetsPublicPath: '/',
+        assetsPublicPath: '/admin/',
 
         /**
          * Source Maps
