@@ -57,7 +57,7 @@ export function formatTime(time, option) {
 export const chunkFile = (file, total, hash, size) => {
 	return Array.from(Array.from(Array(total).keys())).map((item, index) => {
 		let start = index * size;
-		let end = Math.min(file.size, start + start);
+		let end = Math.min(file.size, start + size);
 		const form = new FormData();
 		form.append('file', file.slice(start, end));
 		form.append('index', index);

@@ -14,12 +14,16 @@
 import { policy } from "@/api/oss";
 import {chunkFile} from '@/utils/index';
 import request from '@/utils/request';
+import { Loading } from 'element-ui';
 export default {
     name: "singleUpload",
     props: {
         accept: String,
         path: String,
         'showFileList': Boolean
+    },
+    data () {
+        fullscreenLoading: false
     },
     computed: {
         imageUrl() {
@@ -56,6 +60,10 @@ export default {
     },
     methods: {
         chunFileUplaod(param) {
+            const loadingInstance = Loading.service({
+                text: '上传中请稍等',
+                background: 'rgba(0, 0, 0, 0.8)'
+            });
             const file = param.file;
             const total = Math.ceil(file.size / (1 * 1024 * 1024));
             const hash = String(Date.now() + file.uid + file.lastModified);
@@ -68,7 +76,13 @@ export default {
                     name
                 }).then(res => {
                     this.$emit('onSuccess', res);
-                }) ;
+                    loadingInstance.close();
+                }).catch(res => {
+                    this.$message({
+                        type: 'warning',
+                        message: '上传失败，请重试'
+                    })
+                });
             })
         },
         emitInput(val) {
