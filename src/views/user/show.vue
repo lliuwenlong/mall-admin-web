@@ -45,8 +45,17 @@
         <el-table-column label="编号" width="100" align="center">
           <template slot-scope="scope">{{scope.row.id}}</template>
         </el-table-column>
-        <el-table-column label="用户名称" align="center" prop="username"></el-table-column>
-        <el-table-column label="注册时间" align="center" prop="addTime"></el-table-column>
+        <el-table-column label="用户名称" align="center" prop="username">
+          <template slot-scope="scope">
+            {{scope.row.name && scope.row.name != 'null' ? scope.row.name : scope.row.username}}
+          </template>
+        </el-table-column>
+        <el-table-column label="注册时间" align="center" prop="addTime">
+          <template slot-scope="scope">
+            <!-- <el-switch @change="changeVip(scope.row)" v-model="scope.row.vip" active-color="#13ce66" inactive-color="#ff4949"></el-switch> -->
+            {{addtime(scope.row.addTime)}}
+          </template>
+        </el-table-column>
         <el-table-column label="是否vip" align="center" prop="vip">
           <template slot-scope="scope">
             <!-- <el-switch @change="changeVip(scope.row)" v-model="scope.row.vip" active-color="#13ce66" inactive-color="#ff4949"></el-switch> -->
@@ -55,19 +64,13 @@
         </el-table-column>
       </el-table>
     </div>
-    <!-- <el-dialog title="提示" :visible.sync="dialogVisible" width="645px">
-      <tinymce :width="595" :height="300" v-model="editData.text"></tinymce>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-      </span> 
-    </el-dialog>-->
   </div>
 </template>
 <script>
 import { getUserList } from "@/api/userlist";
 import Tinymce from "@/components/Tinymce";
 import { imgPath } from "@/utils/imgPath";
+import moment from 'moment';
 export default {
   name: "productList",
   components: { tinymce: Tinymce },
@@ -83,6 +86,14 @@ export default {
   },
   created() {
     this.getList();
+  },
+  computed: {
+    addtime() {
+      return (time) => {
+        console.log(time);
+        return moment(+time).format('YYYY-MM-DD');
+      }
+    }
   },
   methods: {
     xiugai(o) {
