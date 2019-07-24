@@ -18,7 +18,7 @@
                     <template slot-scope="scope">{{scope.row.id}}</template>
                 </el-table-column>
                 <el-table-column label="礼品卡名字" align="center" prop="name"></el-table-column>
-                <el-table-column label="流程" align="center" prop="process"></el-table-column>
+                <el-table-column label="剩余数量" align="center" prop="num"></el-table-column>
                 <el-table-column label="简介" align="center" prop="content">
                     <template slot-scope="scope">
                         <span v-html="scope.row.content"></span>

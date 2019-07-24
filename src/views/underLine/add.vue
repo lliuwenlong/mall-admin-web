@@ -171,6 +171,7 @@ export default {
                             addOrUpdate({
                                 ...this.productAttr,
                                 type_id: this.productAttr.type_id,
+                                attr_id: this.productAttr.cityId,
                                 timeSlot: [moment(this.productAttr.timeSlot[0]).valueOf(), moment(this.productAttr.timeSlot[1]).valueOf()]
                             }).then(response => {
                                 this.$message({
@@ -183,6 +184,7 @@ export default {
                         } else {
                             addOrUpdate({
                                 ...this.productAttr,
+                                attr_id: this.productAttr.cityId,
                                 type_id: this.productAttr.type_id,
                                 timeSlot: [moment(this.productAttr.timeSlot[0]).valueOf(), moment(this.productAttr.timeSlot[1]).valueOf()]
                             }).then(response => {

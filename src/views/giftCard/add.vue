@@ -4,12 +4,15 @@
             <el-form-item label="礼品卡名字：" prop="name">
                 <el-input v-model="productAttr.name"></el-input>
             </el-form-item>
-            <el-form-item label="购买须知：" prop="purchase_instructions">
+            <el-form-item label="礼品卡数量：" prop="num">
+                <el-input v-model.number="productAttr.num"></el-input>
+            </el-form-item>
+            <!-- <el-form-item label="购买须知：" prop="purchase_instructions">
                 <tinymce :width="595" :height="300" v-model="productAttr.purchase_instructions"></tinymce>
             </el-form-item>
             <el-form-item label="流程：" prop="process">
                 <el-input v-model="productAttr.process"></el-input>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="介绍" prop="content">
                 <tinymce :width="595" :height="300" v-model="productAttr.content"></tinymce>
             </el-form-item>
@@ -46,7 +49,8 @@ const defaultProductAttr = {
     process: "",
     coverPhoto: "",
     isMod: false,
-    content: ""
+    content: "",
+    num: ''
 };
 export default {
     components: { tinymce: Tinymce },
@@ -74,6 +78,13 @@ export default {
                         min: 2,
                         max: 140,
                         message: "长度在 2 到 140 个字符",
+                        trigger: "blur"
+                    }
+                ],
+                num: [
+                    {
+                        required: true,
+                        message: "请输入礼品卡",
                         trigger: "blur"
                     }
                 ]
