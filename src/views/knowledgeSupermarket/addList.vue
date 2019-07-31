@@ -89,7 +89,7 @@
                     :underline="false"
                 >{{productAttr.img ? '已上传' : '未上传'}}</el-link>
                 <div class="cover" v-if="productAttr.img">
-                    <img :src="getUrl(productAttr.img)" alt>
+                    <img :src="getUrl(productAttr.img)" alt />
                 </div>
             </el-form-item>
             <el-form-item label="上传课程">
@@ -110,15 +110,14 @@
                             :show-file-list="false"
                             @onSuccess="res => uploadAudioSuccess(res, key)"
                             accept=".mp3, .MP3"
+                            type="audio"
                         >
                             <el-button
                                 size="medium"
                                 class="medium-btn"
                                 type="primary"
                                 style="margin-left: 10px"
-                            >
-                                {{productAttr.classHour[key].audio ? '替换音频' : '上传音频'}}
-                            </el-button>
+                            >{{productAttr.classHour[key].audio ? '替换音频' : '上传音频'}}</el-button>
                         </chunckFileUpload>
                         <el-link
                             :type="productAttr.classHour[key].audio ? 'success' : 'danger'"
@@ -130,11 +129,13 @@
                             :show-file-list="false"
                             @onSuccess="res => uploadVideoSuccess(res, key)"
                             accept=".mp4, .MP4, .avi, .AVI"
+                            type="video"
                         >
-                            <el-button size="medium" class="medium-btn" type="primary">
-                                {{productAttr.classHour[key].video ? '替换视频' : '上传视频'}}
-                                
-                            </el-button>
+                            <el-button
+                                size="medium"
+                                class="medium-btn"
+                                type="primary"
+                            >{{productAttr.classHour[key].video ? '替换视频' : '上传视频'}}</el-button>
                         </chunckFileUpload>
                         <el-link
                             :type="productAttr.classHour[key].video ? 'success' : 'danger'"
@@ -150,10 +151,35 @@
                     </el-form-item>
                 </div>
             </el-form-item>
+            <el-form-item
+                label="音频试听时间(单位s)"
+                v-if="productAttr.classHour.length"
+                prop="audio_audition"
+                :rules="[{
+                    required: true, message: '音频试听时间不能为空', trigger: 'blur'
+                }, {
+                    type: 'number', message: '音频试听时间必须为数字', trigger: 'blur'
+                }]"
+            >
+                <el-input style="width: 200px" v-model.number="productAttr.audio_audition"></el-input>
+            </el-form-item>
+            <el-form-item
+                label="视频试看时间(单位s)"
+                v-if="productAttr.classHour.length"
+                prop="video_audition"
+                :rules="[{
+                    required: true, message: '视频试看时间不能为空', trigger: 'blur'
+                }, {
+                    type: 'number', message: '视频试看时间必须为数字', trigger: 'blur'
+                }]"
+            >
+                <el-input style="width: 200px" v-model.number="productAttr.video_audition"></el-input>
+            </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="submitForm('ruleForm')">
-                    {{$route.query.id ? '保存' : '立即创建'}}
-                </el-button>
+                <el-button
+                    type="primary"
+                    @click="submitForm('ruleForm')"
+                >{{$route.query.id ? '保存' : '立即创建'}}</el-button>
                 <el-button @click="resetForm('ruleForm')" v-if="!$route.query.id">重置</el-button>
             </el-form-item>
         </el-form>
@@ -174,12 +200,14 @@ export default {
                 subTitle: "",
                 content: "",
                 classHour: [],
-                price: '',
+                price: "",
                 img: "",
-                speaker: '',
-                vipPrice: '',
-                briefIntroduction: '',
-                type: ''
+                speaker: "",
+                vipPrice: "",
+                briefIntroduction: "",
+                type: "",
+                audio_audition: '',
+                video_audition: ''
             },
             typeList: [],
             deleteId: []
@@ -188,12 +216,29 @@ export default {
     created() {
         this.getTypeList();
         if (this.$route.query.id) {
-            const task = request.post("/market/getList", {id: this.$route.query.id});
-            const curriculumList = request.post("/common/getCurriculumList", {id: this.$route.query.id, type: 1});
+            const task = request.post("/market/getList", {
+                id: this.$route.query.id
+            });
+            const curriculumList = request.post("/common/getCurriculumList", {
+                id: this.$route.query.id,
+                type: 1
+            });
             Promise.all([task, curriculumList]).then(res => {
                 let [list, curriculumList] = res;
                 if (list.errno === 0) {
-                    const {content, price, vipPrice, name, subtitle: subTitle, img, speaker, basic} = list.data[0];
+                    const {
+                        content,
+                        price,
+                        vipPrice,
+                        name,
+                        subtitle: subTitle,
+                        img,
+                        speaker,
+                        basic,
+                        type,
+                        audio_audition,
+                        video_audition
+                    } = list.data[0];
                     this.productAttr = {
                         ...this.productAttr,
                         content,
@@ -203,7 +248,10 @@ export default {
                         subTitle,
                         img,
                         speaker,
-                        briefIntroduction: basic
+                        briefIntroduction: basic,
+                        type,
+                        audio_audition,
+                        video_audition
                     };
                 }
                 if (curriculumList.errno === 0) {
@@ -217,7 +265,7 @@ export default {
                                 audio: item.audio,
                                 c_id: this.$route.query.id,
                                 id: item.id
-                            }
+                            };
                         })
                     };
                 }
@@ -279,41 +327,41 @@ export default {
                         }
                     }
                     if (flag) {
-                        request.post('/market/addOrUpdate', {
-                            name: this.productAttr.name,
-                            subtitle: this.productAttr.subTitle,
-                            content: this.productAttr.content,
-                            list: this.productAttr.classHour,
-                            price: this.productAttr.price,
-                            vipPrice: this.productAttr.vipPrice,
-                            img: this.productAttr.img,
-                            speaker: this.productAttr.speaker,
-                            basic: this.productAttr.briefIntroduction,
-                            type: this.productAttr.type,
-                            ...(
-                                this.$route.query.id
-                                    ? {id: this.$route.query.id}
-                                    : {}
-                            ),
-                            ...(
-                                this.$route.query.id
-                                    ? {deleteId: this.deleteId}
-                                    : {}
-                            )
-                        }).then(res => {
-                            if (res.errno === 0) {
-                                this.$message({
-                                    type: 'success',
-                                    message: res.errmsg
-                                });
-                                this.$router.push('showList');
-                            } else {
-                                this.$message({
-                                    type: 'warning',
-                                    message: res.errmsg
-                                });
-                            }
-                        });
+                        request
+                            .post("/market/addOrUpdate", {
+                                name: this.productAttr.name,
+                                subtitle: this.productAttr.subTitle,
+                                content: this.productAttr.content,
+                                list: this.productAttr.classHour,
+                                price: this.productAttr.price,
+                                vipPrice: this.productAttr.vipPrice,
+                                img: this.productAttr.img,
+                                speaker: this.productAttr.speaker,
+                                basic: this.productAttr.briefIntroduction,
+                                type: this.productAttr.type,
+                                audio_audition: this.productAttr.audio_audition,
+                                video_audition: this.productAttr.video_audition,
+                                ...(this.$route.query.id
+                                    ? { id: this.$route.query.id }
+                                    : {}),
+                                ...(this.$route.query.id
+                                    ? { deleteId: this.deleteId }
+                                    : {})
+                            })
+                            .then(res => {
+                                if (res.errno === 0) {
+                                    this.$message({
+                                        type: "success",
+                                        message: res.errmsg
+                                    });
+                                    this.$router.push("showList");
+                                } else {
+                                    this.$message({
+                                        type: "warning",
+                                        message: res.errmsg
+                                    });
+                                }
+                            });
                     } else {
                         this.$alert(
                             `请完成${content.join(",")}内容上传或填写`,
@@ -340,7 +388,7 @@ export default {
                 price: 0,
                 cover: ""
             };
-            this.type = '';
+            this.type = "";
             this.$refs.productAttrFrom.resetFields();
         },
         deleteClass(key) {
@@ -350,13 +398,14 @@ export default {
             productAttr.classHour = [...classHour];
             this.productAttr = { ...productAttr };
             if (data[0] && data[0].id) {
-                this.deleteId = [...this.deleteId, data[0].id]
+                this.deleteId = [...this.deleteId, data[0].id];
             }
         },
         uploadAudioSuccess(res, key) {
             if (res.errno === 0) {
                 const productAttr = { ...this.productAttr };
-                productAttr.classHour[key]["audio"] = res.data;
+                productAttr.classHour[key]["audio"] = res.data.path;
+                productAttr.classHour[key]["audio_duration"] = res.data.duration;
                 this.productAttr = { ...productAttr };
             }
         },
@@ -373,7 +422,9 @@ export default {
         uploadVideoSuccess(res, key) {
             if (res.errno === 0) {
                 const productAttr = { ...this.productAttr };
-                productAttr.classHour[key]["video"] = res.data;
+                productAttr.classHour[key]["video"] = res.data.path;
+                productAttr.classHour[key]["video_duration"] = res.data.duration;
+                productAttr.classHour[key]["video_cover"] = res.data.courpath;
                 this.productAttr = { ...productAttr };
             }
         }

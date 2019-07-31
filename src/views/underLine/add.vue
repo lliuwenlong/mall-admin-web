@@ -4,6 +4,20 @@
             <el-form-item label="活动名称" prop="name">
                 <el-input v-model="productAttr.name"></el-input>
             </el-form-item>
+            <el-form-item label="封面" prop="contactsImg">
+                <el-upload
+                    class="avatar-uploader"
+                    action="/api/common/uploadFile"
+                    :show-file-list="false"
+                    :on-success="res=>{ productAttr.img=res.data.path }"
+                >
+                    <i  class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
+
+                <div>
+                    <img style="width: 400px" v-if="productAttr.img" :src="imgPath()+productAttr.img" class="avatar">
+                </div>
+            </el-form-item>
             <el-form-item label="票数" prop="num">
                 <el-input v-model="productAttr.num"></el-input>
             </el-form-item>
@@ -184,8 +198,8 @@ export default {
                         } else {
                             addOrUpdate({
                                 ...this.productAttr,
-                                attr_id: this.productAttr.cityId,
                                 type_id: this.productAttr.type_id,
+                                attr_id: this.productAttr.cityId,
                                 timeSlot: [moment(this.productAttr.timeSlot[0]).valueOf(), moment(this.productAttr.timeSlot[1]).valueOf()]
                             }).then(response => {
                                 this.$message({

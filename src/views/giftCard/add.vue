@@ -102,7 +102,10 @@ export default {
         // } else {
         this.resetProductAttr();
         if (this.$route.query.data && this.$route.query.data.name)
-            this.productAttr = this.$route.query.data;
+            this.productAttr = {
+                ...this.$route.query.data,
+                isMod: true
+            };
         // }
         // this.getCateList();
     },

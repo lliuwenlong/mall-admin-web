@@ -138,6 +138,7 @@
                             :show-file-list="false"
                             @onSuccess="res => uploadAudioSuccess(res, key)"
                             accept=".mp3, .MP3"
+                            type="audio"
                         >
                             <el-button
                                 size="medium"
@@ -156,6 +157,7 @@
                             :show-file-list="false"
                             @onSuccess="res => uploadVideoSuccess(res, key)"
                             accept=".mp4, .MP4, .avi, .AVI"
+                            type="video"
                         >
                             <el-button
                                 size="medium"
@@ -176,6 +178,30 @@
                         >删除</el-button>
                     </el-form-item>
                 </div>
+            </el-form-item>
+            <el-form-item
+                label="音频试听时间(单位s)"
+                v-if="productAttr.classHour.length && type === 2"
+                prop="audio_audition"
+                :rules="[{
+                    required: true, message: '音频试听时间不能为空', trigger: 'blur'
+                }, {
+                    type: 'number', message: '音频试听时间必须为数字', trigger: 'blur'
+                }]"
+            >
+                <el-input style="width: 200px" v-model.number="productAttr.audio_audition"></el-input>
+            </el-form-item>
+            <el-form-item
+                label="视频试看时间(单位s)"
+                v-if="productAttr.classHour.length && type === 2"
+                prop="video_audition"
+                :rules="[{
+                    required: true, message: '视频试看时间不能为空', trigger: 'blur'
+                }, {
+                    type: 'number', message: '视频试看时间必须为数字', trigger: 'blur'
+                }]"
+            >
+                <el-input style="width: 200px" v-model.number="productAttr.video_audition"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button
@@ -208,7 +234,9 @@ export default {
                 isSetMeal: 0,
                 lowerPrice: 0,
                 intermediatePrice: 0,
-                seniorPrice: 0
+                seniorPrice: 0,
+                audio_audition: 0,
+                video_auration: 0
             },
             typeList: [],
             type: "",
@@ -235,7 +263,13 @@ export default {
                         type_id: typeId,
                         subtitle: subTitle,
                         cover,
-                        type
+                        type,
+                        is_setmeal: isSetMeal,
+                        lower_price: lowerPrice,
+                        intermediate_price: intermediatePrice,
+                        senior_price: seniorPrice,
+                        audio_audition,
+                        video_audition
                     } = list.data[0];
                     this.type = type;
                     this.productAttr = {
@@ -245,7 +279,13 @@ export default {
                         name,
                         typeId,
                         subTitle,
-                        cover
+                        cover,
+                        isSetMeal,
+                        lowerPrice,
+                        intermediatePrice,
+                        seniorPrice,
+                        audio_audition,
+                        video_audition
                     };
                 }
                 if (curriculumList.errno === 0) {
@@ -327,6 +367,8 @@ export default {
                                 type_id: this.productAttr.typeId,
                                 price: this.productAttr.price,
                                 cover: this.productAttr.cover,
+                                audio_audition: this.productAttr.audio_audition,
+                                video_audition: this.productAttr.video_audition,
                                 ...(this.type == 2
                                     ? {
                                         is_setmeal: this.productAttr.isSetMeal,
@@ -399,7 +441,8 @@ export default {
         uploadAudioSuccess(res, key) {
             if (res.errno === 0) {
                 const productAttr = { ...this.productAttr };
-                productAttr.classHour[key]["audio"] = res.data;
+                productAttr.classHour[key]["audio"] = res.data.path;
+                productAttr.classHour[key]["audio_duration"] = res.data.duration;
                 this.productAttr = { ...productAttr };
             }
         },
@@ -428,7 +471,9 @@ export default {
         uploadVideoSuccess(res, key) {
             if (res.errno === 0) {
                 const productAttr = { ...this.productAttr };
-                productAttr.classHour[key]["video"] = res.data;
+                productAttr.classHour[key]["video"] = res.data.path;
+                productAttr.classHour[key]["video_duration"] = res.data.duration;
+                productAttr.classHour[key]["video_cover"] = res.data.courpath;
                 this.productAttr = { ...productAttr };
             }
         }

@@ -12,7 +12,7 @@
                     style="display: inline-block"
                     :show-file-list="false"
                     @onSuccess="res => {
-                        productAttr.img = res.data;
+                        productAttr.img = res.data.path;
                         productAttr={...productAttr};
                     }"
                     accept=".png, .jpg, .jpeg"
@@ -55,7 +55,7 @@
                             style="display: inline-block"
                             :show-file-list="false"
                             @onSuccess="res => {
-                                productAttr.headImg=res.data;
+                                productAttr.headImg=res.data.path;
                                 productAttr={...productAttr};
                             }"
                             accept=".png, .jpg, .jpeg"
@@ -248,7 +248,7 @@
                             style="display: inline-block"
                             :show-file-list="false"
                             @onSuccess="res => {
-                                productAttr.unicorn_member[key].img=res.data;
+                                productAttr.unicorn_member[key].img=res.data.path;
                                 productAttr={...productAttr};
                             }"
                             accept=".png, .jpg, .jpeg"
@@ -298,10 +298,13 @@
                             style="display: inline-block"
                             :show-file-list="false"
                             @onSuccess="res => {
-                                productAttr.unicorn_videos[key].path=res.data;
+                                productAttr.unicorn_videos[key].path=res.data.path;
+                                productAttr.unicorn_videos[key].video_duration = res.data.duration;
+                                productAttr.unicorn_videos[key].video_cover = res.data.courpath;
                                 productAttr={...productAttr};
                             }"
                             accept=".mp4, .avi"
+                            type="video"
                         >
                             <el-button
                                 size="medium"
@@ -329,7 +332,7 @@
                     style="display: inline-block"
                     :show-file-list="false"
                     @onSuccess="res => {
-                        productAttr.relevant_information = res.data;
+                        productAttr.relevant_information = res.data.path;
                         productAttr={...productAttr};
                     }"
                     accept=".png, .jpg, .jpeg"

@@ -20,7 +20,8 @@ export default {
     props: {
         accept: String,
         path: String,
-        'showFileList': Boolean
+        'showFileList': Boolean,
+        type: String
     },
     data () {
         fullscreenLoading: false
@@ -73,7 +74,8 @@ export default {
                 request.post('/common/mergeChunkFile', {
                     total,
                     hash,
-                    name
+                    name,
+                    type: this.type
                 }).then(res => {
                     this.$emit('onSuccess', res);
                     loadingInstance.close();
